@@ -13,6 +13,15 @@ npx cdk bootstrap --profile ivan-arteaga-dev
 npx cdk deploy --profile ivan-arteaga-dev
 ```
 
+
+#### OneTable is a tool for managing DynamoDB queries
+```
+npm i @aws-sdk/client-dynamodb dynamodb-onetable
+npm i -D esbuild
+npm i @aws-cdk/aws-apigatewayv2-alpha @aws-cdk/aws-apigatewayv2-integrations-alpha
+npm i react react-dom
+npm i -D @types/react @types/react-dom @vitejs/plugin-react-refresh vite
+```
 ---
 
 # Welcome to your CDK TypeScript project
