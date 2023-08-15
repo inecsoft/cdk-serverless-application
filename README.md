@@ -22,6 +22,11 @@ npm i @aws-cdk/aws-apigatewayv2-alpha @aws-cdk/aws-apigatewayv2-integrations-alp
 npm i react react-dom
 npm i -D @types/react @types/react-dom @vitejs/plugin-react-refresh vite
 ```
+
+### __How to destroy the project__
+```
+npx cdk destroy --profile ivan-arteaga-dev
+```
 ---
 
 # Welcome to your CDK TypeScript project
