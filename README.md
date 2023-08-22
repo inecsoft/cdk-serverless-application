@@ -26,7 +26,13 @@ npm i -D @types/react @types/react-dom @vitejs/plugin-react-refresh vite
 ### __How to destroy the project__
 ```
 npx cdk destroy --profile ivan-arteaga-dev
+```d
+
+### __How to test the app__
 ```
+npx vite
+```
+
 ---
 
 # Welcome to your CDK TypeScript project
