@@ -1,12 +1,14 @@
----
+***
 
 ### __Start project__
 ```
 npx cdk init app --language=typescript
 ```
+### __How to bootstrap your project__
 
-### __ How to bootstrap your project__
+```
 npx cdk bootstrap --profile ivan-arteaga-dev
+```
 
 ### __Deploy project__
 ```
@@ -26,7 +28,7 @@ npm i -D @types/react @types/react-dom @vitejs/plugin-react-refresh vite
 ### __How to destroy the project__
 ```
 npx cdk destroy --profile ivan-arteaga-dev
-```d
+```
 
 ### __How to test the app__
 ```

@@ -12,14 +12,22 @@ export class PipelineStack extends cdk.Stack {
     constructor(scope: Construct, id :string, props: PipelineStackProps) {
         super(scope, id, props);
 
+        const sourcegithubpat = pipelines.CodePipelineSource.gitHub( 'TfGMEnterprise/ivan-secrets-management-practice', 'cdk-serverless-app', {
+            // This is optional
+            authentication: cdk.SecretValue.secretsManager('dev/pat'),
+        });
+
+        const sourcegithubconnection = pipelines.CodePipelineSource.connection('TfGMEnterprise/ivan-secrets-management-practice', 'cdk-serverless-app', {
+            connectionArn: 'REPLACE_WITH_CONNECTION_ARN',
+        });
+
         this.pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
             synth: new pipelines.ShellStep('synth', {
-                input: pipelines.CodePipelineSource.connection('REPLACE_WITH_OWNER/repo-app', 'main', {
-                    connectionArn: 'REPLACE_WITH_CONNECTION_ARN',
-                }),
+                input: sourcegithubpat,
                 commands: [
                     'npm ci',
                     'npx cdk synth',
+                    'echo {SourceVariables.BranchName}',
                 ],
             }),
             crossAccountKeys: true,
