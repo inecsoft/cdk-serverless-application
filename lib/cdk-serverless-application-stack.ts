@@ -42,6 +42,7 @@ export class CdkServerlessApplicationStack extends cdk.Stack {
       encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
       versioned: false,
       blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     new Networking(this, 'NetworkingConstruct', {
