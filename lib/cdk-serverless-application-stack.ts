@@ -45,6 +45,8 @@ export class CdkServerlessApplicationStack extends cdk.Stack {
 
     const vpc = new cdk.aws_ec2.Vpc(this, 'TheVPC', {
       ipAddresses: cdk.aws_ec2.IpAddresses.cidr('10.0.0.0/16'),
+      natGateways: 1,
+      maxAzs: 2,
     });
 
     new cdk.CfnOutput(this, 'DocumentsBucketNameExport', {
