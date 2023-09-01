@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> b2aa9ffbeadd4f45a6b19134e3ab7612883497a9
 ### **Start project**
 
 ```
