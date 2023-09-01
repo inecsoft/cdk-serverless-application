@@ -1,22 +1,25 @@
-***
+---
 
-### __Start project__
+### **Start project**
+
 ```
 npx cdk init app --language=typescript
 ```
-### __How to bootstrap your project__
+
+### **How to bootstrap your project**
 
 ```
 npx cdk bootstrap --profile ivan-arteaga-dev
 ```
 
-### __Deploy project__
+### **Deploy project**
+
 ```
 npx cdk deploy --profile ivan-arteaga-dev
 ```
 
-
 #### OneTable is a tool for managing DynamoDB queries
+
 ```
 npm i @aws-sdk/client-dynamodb dynamodb-onetable
 npm i -D esbuild
@@ -25,12 +28,14 @@ npm i react react-dom
 npm i -D @types/react @types/react-dom @vitejs/plugin-react-refresh vite
 ```
 
-### __How to destroy the project__
+### **How to destroy the project**
+
 ```
 npx cdk destroy --profile ivan-arteaga-dev
 ```
 
-### __How to test the app__
+### **How to test the app**
+
 ```
 npx vite
 ```
@@ -51,3 +56,4 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 - `cdk deploy` deploy this stack to your default AWS account/region
 - `cdk diff` compare deployed stack with current state
 - `cdk synth` emits the synthesized CloudFormation template
+- `cdk docs` emits url for cdk api
