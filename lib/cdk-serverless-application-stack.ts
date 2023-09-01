@@ -1,6 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import { Networking } from './cdk-networking';
 import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Architecture } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
@@ -43,10 +44,9 @@ export class CdkServerlessApplicationStack extends cdk.Stack {
       blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
     });
 
-    const vpc = new cdk.aws_ec2.Vpc(this, 'TheVPC', {
-      ipAddresses: cdk.aws_ec2.IpAddresses.cidr('10.0.0.0/16'),
+    new Networking(this, 'NetworkingConstruct', {
+      maxAzs: 3,
       natGateways: 1,
-      maxAzs: 2,
     });
 
     new cdk.CfnOutput(this, 'DocumentsBucketNameExport', {
