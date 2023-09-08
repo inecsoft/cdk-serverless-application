@@ -14,7 +14,7 @@ export class PipelineStack extends cdk.Stack {
 
     const sourcegithubpat = pipelines.CodePipelineSource.gitHub(
       'inecsoft/cdk-serverless-application',
-      'cdk-serverless-app',
+      'nextjs-app',
       {
         // This is optional
         authentication: cdk.SecretValue.secretsManager('dev/pat'),
