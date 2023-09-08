@@ -106,6 +106,7 @@ export class NextjsLamdbaStack extends cdk.Stack {
         encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
         versioned: true,
         accessControl: cdk.aws_s3.BucketAccessControl.LOG_DELIVERY_WRITE,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
       }
     );
 
@@ -115,6 +116,7 @@ export class NextjsLamdbaStack extends cdk.Stack {
       versioned: true,
       serverAccessLogsBucket: nextLoggingBucket,
       serverAccessLogsPrefix: 's3-access-logs',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     new cdk.CfnOutput(this, 'Next bucket', { value: nextBucket.bucketName });
