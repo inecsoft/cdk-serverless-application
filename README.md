@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-
-
->>>>>>> b2aa9ffbeadd4f45a6b19134e3ab7612883497a9
 ### **Start project**
 
 ```
@@ -40,7 +35,15 @@ npx cdk destroy --profile ivan-arteaga-dev
 ### **How to test the app**
 
 ```
-npx vite
+cd app
+npm install
+npm run dev
+# or
+yarn dev
+```
+
+```
+npm run build
 ```
 
 ---

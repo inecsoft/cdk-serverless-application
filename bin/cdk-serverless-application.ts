@@ -3,6 +3,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { CdkServerlessApplicationStack } from '../lib/cdk-serverless-application-stack';
 import { PipelineStack } from '../lib/cdk-serverless-app-pipeline-stack';
+import { NextjsLamdbaStack } from '../lib/cdk-nextjsapp-stack';
 import { Construct } from 'constructs';
 
 const app = new cdk.App();
@@ -35,7 +36,7 @@ const delivery = new PipelineStack(app, 'Frontend-DeliveryPipeline', {
   env: {
     // account: '12345678910',
     region: 'eu-west-1',
-  }
+  },
 });
 
 export interface AppStageProps extends cdk.StageProps {
@@ -46,7 +47,6 @@ export class AppStage extends cdk.Stage {
     super(scope, id, props);
 
     new CdkServerlessApplicationStack(this, 'CdkServerlessApplicationStack', {
-
       tags: {
         environment: 'dev',
         category: 'ecommerce',
@@ -54,7 +54,16 @@ export class AppStage extends cdk.Stage {
         repo: 'cdk-serverless-application',
         product_owner: 'ivan.arteaga',
       },
+    });
 
+    new NextjsLamdbaStack(this, 'NextjsLamdbaStack', {
+      tags: {
+        environment: 'dev',
+        category: 'ecommerce',
+        tech: 'cdk',
+        repo: 'cdk-serverless-application',
+        product_owner: 'ivan.arteaga',
+      },
     });
   }
 }
