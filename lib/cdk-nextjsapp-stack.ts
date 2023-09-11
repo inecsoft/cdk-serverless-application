@@ -51,6 +51,7 @@ export class NextjsLamdbaStack extends cdk.Stack {
         code: cdk.aws_lambda.Code.fromAsset(
           path.join(__dirname, '../app/.next/', 'standalone')
         ),
+
         architecture: cdk.aws_lambda.Architecture.X86_64, //cdk.aws_lambda.Architecture.ARM_64
         environment: {
           AWS_LAMBDA_EXEC_WRAPPER: '/opt/bootstrap',
@@ -59,6 +60,7 @@ export class NextjsLamdbaStack extends cdk.Stack {
         },
         layers: [lambdaAdapterLayer],
         timeout: cdk.Duration.minutes(5),
+        tracing: cdk.aws_lambda.Tracing.ACTIVE,
         // role: lambdaRole, // user-provided role
       }
     );
