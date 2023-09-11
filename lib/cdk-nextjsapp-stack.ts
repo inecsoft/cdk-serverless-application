@@ -46,7 +46,7 @@ export class NextjsLamdbaStack extends cdk.Stack {
       this,
       'NextCdkFunction',
       {
-        runtime: cdk.aws_lambda.Runtime.NODEJS_16_X,
+        runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
         handler: 'run.sh',
         code: cdk.aws_lambda.Code.fromAsset(
           path.join(__dirname, '../app/.next/', 'standalone')
