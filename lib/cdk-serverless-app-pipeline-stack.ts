@@ -65,7 +65,7 @@ export class PipelineStack extends cdk.Stack {
         // Control the build environment
         buildEnvironment: {
           computeType: cdk.aws_codebuild.ComputeType.LARGE,
-          buildImage: cdk.aws_codebuild.LinuxBuildImage.STANDARD_6_0,
+          buildImage: cdk.aws_codebuild.LinuxBuildImage.STANDARD_7_0,
           privileged: true,
         },
         timeout: cdk.Duration.minutes(10),
