@@ -55,7 +55,7 @@ export class PipelineStack extends cdk.Stack {
               // runtime-versions:
               //   python: 3.8
               // nodejs: 18,
-              'runtime-versions': { nodejs: '18.x' },
+              'runtime-versions': { nodejs: '18' },
             },
           },
 
