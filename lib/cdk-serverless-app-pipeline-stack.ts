@@ -39,7 +39,6 @@ export class PipelineStack extends cdk.Stack {
           'npm run build',
           'cd ..',
           'npx cdk synth',
-          'echo ${SourceVariables.BranchName}',
         ],
       }),
 
