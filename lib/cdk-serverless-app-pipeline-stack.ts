@@ -38,7 +38,6 @@ export class PipelineStack extends cdk.Stack {
           'npm install',
           'npm run build',
           'cd ..',
-          // 'npx cdk bootstrap',
           'npx cdk synth',
           'echo {SourceVariables.BranchName}',
         ],
@@ -49,6 +48,16 @@ export class PipelineStack extends cdk.Stack {
         // Prepend commands and configuration to all projects
         partialBuildSpec: cdk.aws_codebuild.BuildSpec.fromObject({
           version: '0.2',
+          phases: {
+            install: {
+              // Add the shell commands to install your drop-in Docker
+              // replacement to the CodeBuild enviromment.
+              // commands: installCommands,
+              // runtime-versions:
+              //   python: 3.8
+              nodejs: 18,
+            },
+          },
 
           // ...
         }),
