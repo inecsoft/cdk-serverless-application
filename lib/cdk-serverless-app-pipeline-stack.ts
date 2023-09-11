@@ -43,6 +43,24 @@ export class PipelineStack extends cdk.Stack {
           'echo {SourceVariables.BranchName}',
         ],
       }),
+
+      // Defaults for all CodeBuild projects
+      codeBuildDefaults: {
+        // Prepend commands and configuration to all projects
+        partialBuildSpec: cdk.aws_codebuild.BuildSpec.fromObject({
+          version: '0.2',
+
+          // ...
+        }),
+
+        // Control the build environment
+        buildEnvironment: {
+          computeType: cdk.aws_codebuild.ComputeType.LARGE,
+          buildImage: cdk.aws_codebuild.LinuxBuildImage.STANDARD_7_0,
+        },
+        timeout: cdk.Duration.minutes(10),
+      },
+
       crossAccountKeys: true,
       dockerEnabledForSynth: true,
     });
