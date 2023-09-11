@@ -54,7 +54,8 @@ export class PipelineStack extends cdk.Stack {
               // commands: installCommands,
               // runtime-versions:
               //   python: 3.8
-              nodejs: 18,
+              // nodejs: 18,
+              'runtime-versions': { nodejs: '18.x' },
             },
           },
 
@@ -64,7 +65,7 @@ export class PipelineStack extends cdk.Stack {
         // Control the build environment
         buildEnvironment: {
           computeType: cdk.aws_codebuild.ComputeType.LARGE,
-          buildImage: cdk.aws_codebuild.LinuxBuildImage.STANDARD_7_0,
+          buildImage: cdk.aws_codebuild.LinuxBuildImage.STANDARD_6_0,
           privileged: true,
         },
         timeout: cdk.Duration.minutes(10),
