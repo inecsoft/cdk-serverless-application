@@ -38,7 +38,7 @@ export class PipelineStack extends cdk.Stack {
           'npm install',
           'npm run build',
           'cd ..',
-          'npm cdk bootstrap',
+          // 'npx cdk bootstrap',
           'npx cdk synth',
           'echo {SourceVariables.BranchName}',
         ],
@@ -57,6 +57,7 @@ export class PipelineStack extends cdk.Stack {
         buildEnvironment: {
           computeType: cdk.aws_codebuild.ComputeType.LARGE,
           buildImage: cdk.aws_codebuild.LinuxBuildImage.STANDARD_7_0,
+          privileged: true,
         },
         timeout: cdk.Duration.minutes(10),
       },
