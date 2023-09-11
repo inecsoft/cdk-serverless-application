@@ -8,12 +8,6 @@ export class NextjsLamdbaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: StackNameProps) {
     super(scope, id, props);
 
-    // const lambdaAdapterLayer = cdk.aws_lambda.LayerVersion.fromLayerVersionArn(
-    //   this,
-    //   'LambdaAdapterLayerX86',
-    //   `arn:aws:lambda:${this.region}:${this.account}:layer:LambdaAdapterLayerX86`
-    // );
-
     const lambdaAdapterLayer = new cdk.aws_lambda.LayerVersion(
       this,
       'lambdaAdapterLayer',
@@ -52,7 +46,7 @@ export class NextjsLamdbaStack extends cdk.Stack {
       this,
       'NextCdkFunction',
       {
-        runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
+        runtime: cdk.aws_lambda.Runtime.NODEJS_16_X,
         handler: 'run.sh',
         code: cdk.aws_lambda.Code.fromAsset(
           path.join(__dirname, '../app/.next/', 'standalone')
