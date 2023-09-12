@@ -36,5 +36,9 @@ export class AppStage extends cdk.Stage {
 delivery.pipeline.addStage(
   new AppStage(app, 'App', {
     name: 'deploy-nextjs-app',
+    env: {
+      // account: '5555557759',
+      region: 'eu-west-1',
+    },
   })
 );
