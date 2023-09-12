@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy": "cdk deploy --profile ivan-arteaga-dev --outputs-file ./lib/config.json"
+    "deploy": "cdk deploy --profile ivan-arteaga-dev --outputs-file ~/config.json"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
