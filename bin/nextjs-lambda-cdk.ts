@@ -7,7 +7,7 @@ import { PipelineStack } from '../lib/cdk-serverless-app-pipeline-stack';
 const app = new cdk.App();
 
 const delivery = new PipelineStack(app, 'nextjs-DeliveryPipeline', {
-  name: 'Frontend-DeliveryPipeline',
+  name: 'nextjs-DeliveryPipeline',
   env: {
     // account: '12345678910',
     region: 'eu-west-1',
