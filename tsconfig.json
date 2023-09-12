@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "jsx": "react",
-    "target": "ES2020",
+    "target": "ES2018",
     "module": "commonjs",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2018"
+    ],
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -18,11 +19,12 @@
     "inlineSources": true,
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "allowImportingTsExtensions": true,
-    "emitDeclarationOnly": true,
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
   },
-  "exclude": ["node_modules", "cdk.out"],  
+  "exclude": [
+    "node_modules",
+    "cdk.out"
+  ]
 }

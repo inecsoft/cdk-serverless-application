@@ -1,65 +1,65 @@
-### **Start project**
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-```
-npx cdk init app --language=typescript
-```
+## Deploy on AWS
 
-### **How to bootstrap your project**
+1. Clone git repository and navigate to CDK project
 
-```
-npx cdk bootstrap --profile ivan-arteaga-dev
-```
-
-### **Deploy project**
-
-```
-npx cdk deploy --profile ivan-arteaga-dev
+```bash
+git clone https://github.com/aws-samples/aws-lambda-nextjs.git
+cd nextjs-lambda-cdk
 ```
 
-#### OneTable is a tool for managing DynamoDB queries
+2. Install CDK
+
+```bash
+npm install
 
 ```
-npm i @aws-sdk/client-dynamodb dynamodb-onetable
-npm i -D esbuild
-npm i @aws-cdk/aws-apigatewayv2-alpha @aws-cdk/aws-apigatewayv2-integrations-alpha
-npm i react react-dom
-npm i -D @types/react @types/react-dom @vitejs/plugin-react-refresh vite
-```
 
-### **How to destroy the project**
+3. Install and build the Next application in standalone mode (see `app/next.config.js`)
 
-```
-npx cdk destroy --profile ivan-arteaga-dev
-```
-
-### **How to test the app**
-
-```
+```bash
 cd app
 npm install
-npm run dev
-# or
-yarn dev
-```
-
-```
 npm run build
 ```
 
----
+4. Now navigate back to root of the CDK project and run CDK commands
 
-# Welcome to your CDK TypeScript project
+```bash
+cd ..
+cdk bootstrap
+cdk synth
+```
 
-This is a blank project for CDK development with TypeScript.
+5. Deploy the application
+
+```bash
+cdk deploy
+```
+
+## Next.js Static Files Support
+
+In order to support `public` directory being deployed to S3 bucket and CloudFront, must use `/static` prefix for assets inside the `public` directory.
+
+## CDK TypeScript project
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands
 
-- `npm run build` compile typescript to js
-- `npm run watch` watch for changes and compile
-- `npm run test` perform the jest unit tests
-- `cdk deploy` deploy this stack to your default AWS account/region
-- `cdk diff` compare deployed stack with current state
-- `cdk synth` emits the synthesized CloudFormation template
-- `cdk docs` emits url for cdk api
+* `npm run build`   compile typescript to js
+* `npm run watch`   watch for changes and compile
+* `npm run test`    perform the jest unit tests
+* `cdk deploy`      deploy this stack to your default AWS account/region
+* `cdk diff`        compare deployed stack with current state
+* `cdk synth`       emits the synthesized CloudFormation template
+
+## Destroy CDK app resources
+
+To clean up your CDK app run the below command:
+```bash
+cdk destroy --all
+```
+
+Please be aware that some resources aren't automatically deleted and either need a retention policy that allows deletes or you need to delete them manually in you AWS account.
