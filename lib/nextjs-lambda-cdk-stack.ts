@@ -1,126 +1,149 @@
-import { 
-  CfnOutput,
-  Duration, 
-  Stack,
-  StackProps, 
-} from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
-import * as apiGateway from 'aws-cdk-lib/aws-apigateway';
-import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
-import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
-import * as s3 from 'aws-cdk-lib/aws-s3';
-import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import * as cdk from 'aws-cdk-lib';
 
-const path = require('node:path');
+import path from 'path';
 
-export class NextjsLambdaCdkStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+export class NextjsLambdaCdkStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const lambdaAdapterLayer = lambda.LayerVersion.fromLayerVersionArn(
+    const lambdaAdapterLayer = new cdk.aws_lambda.LayerVersion(
       this,
-      'LambdaAdapterLayerX86',
-      `arn:aws:lambda:${this.region}:753240598075:layer:LambdaAdapterLayerX86:3`
+      'lambdaAdapterLayer',
+      {
+        removalPolicy: cdk.RemovalPolicy.RETAIN,
+        code: cdk.aws_lambda.Code.fromAsset(
+          path.join(__dirname, '../app/.next/', 'standalone')
+        ),
+        compatibleArchitectures: [
+          cdk.aws_lambda.Architecture.X86_64,
+          cdk.aws_lambda.Architecture.ARM_64,
+        ],
+      }
     );
 
-    const nextCdkFunction = new lambda.Function(this, 'NextCdkFunction', {
-      runtime: lambda.Runtime.NODEJS_16_X,
-      handler: 'run.sh',
-      code: lambda.Code.fromAsset(path.join(
-        __dirname,
-        '../app/.next/',
-        'standalone')
-      ),
-      architecture: lambda.Architecture.X86_64,
-      environment: {
-        'AWS_LAMBDA_EXEC_WRAPPER': '/opt/bootstrap',
-        'RUST_LOG': 'info',
-        'PORT': '8080',
+    const nextCdkFunction = new cdk.aws_lambda.Function(
+      this,
+      'NextCdkFunction',
+      {
+        runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
+        handler: 'run.sh',
+        code: cdk.aws_lambda.Code.fromAsset(
+          path.join(__dirname, '../app/.next/', 'standalone')
+        ),
+        architecture: cdk.aws_lambda.Architecture.X86_64,
+        environment: {
+          AWS_LAMBDA_EXEC_WRAPPER: '/opt/bootstrap',
+          RUST_LOG: 'info',
+          PORT: '8080',
+        },
+        layers: [lambdaAdapterLayer],
+        memorySize: 256,
+        timeout: cdk.Duration.minutes(5),
+      }
+    );
+
+    const api = new cdk.aws_apigateway.RestApi(this, 'api', {
+      defaultCorsPreflightOptions: {
+        allowOrigins: cdk.aws_apigateway.Cors.ALL_ORIGINS,
+        allowMethods: cdk.aws_apigateway.Cors.ALL_METHODS,
       },
-      layers: [lambdaAdapterLayer],
     });
 
-    const api = new apiGateway.RestApi(this, "api", {
-      defaultCorsPreflightOptions: {
-        allowOrigins: apiGateway.Cors.ALL_ORIGINS,
-        allowMethods: apiGateway.Cors.ALL_METHODS
-      }
-    });
-    
-    const nextCdkFunctionIntegration = new apiGateway.LambdaIntegration(
+    const nextCdkFunctionIntegration = new cdk.aws_apigateway.LambdaIntegration(
       nextCdkFunction,
       {
-        allowTestInvoke: false
+        allowTestInvoke: false,
       }
     );
     api.root.addMethod('ANY', nextCdkFunctionIntegration);
 
     api.root.addProxy({
-      defaultIntegration: new apiGateway.LambdaIntegration(nextCdkFunction, {
-          allowTestInvoke: false
-      }),
+      defaultIntegration: new cdk.aws_apigateway.LambdaIntegration(
+        nextCdkFunction,
+        {
+          allowTestInvoke: false,
+        }
+      ),
       anyMethod: true,
     });
 
-    const nextLoggingBucket = new s3.Bucket(this, 'next-logging-bucket', {
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      encryption: s3.BucketEncryption.S3_MANAGED,
-      versioned: true,
-      accessControl: s3.BucketAccessControl.LOG_DELIVERY_WRITE,
-    });
-    
-    const nextBucket = new s3.Bucket(this, 'next-bucket', {
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      encryption: s3.BucketEncryption.S3_MANAGED,
+    const nextLoggingBucket = new cdk.aws_s3.Bucket(
+      this,
+      'next-logging-bucket',
+      {
+        blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
+        encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
+        versioned: true,
+        accessControl: cdk.aws_s3.BucketAccessControl.LOG_DELIVERY_WRITE,
+      }
+    );
+
+    const nextBucket = new cdk.aws_s3.Bucket(this, 'next-bucket', {
+      blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
+      encryption: cdk.aws_s3.BucketEncryption.S3_MANAGED,
       versioned: true,
       serverAccessLogsBucket: nextLoggingBucket,
       serverAccessLogsPrefix: 's3-access-logs',
     });
 
-    new CfnOutput(this, 'Next bucket', { value: nextBucket.bucketName });
-    
-    const cloudfrontDistribution = new cloudfront.Distribution(this, 'Distribution', {
-      defaultBehavior: { 
-        origin: new origins.RestApiOrigin(api), 
-        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-      },
-      additionalBehaviors: {
-        '_next/static/*': {
-          origin: new origins.S3Origin(nextBucket),
-          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+    new cdk.CfnOutput(this, 'Next bucket', { value: nextBucket.bucketName });
+
+    const cloudfrontDistribution = new cdk.aws_cloudfront.Distribution(
+      this,
+      'Distribution',
+      {
+        defaultBehavior: {
+          origin: new cdk.aws_cloudfront_origins.RestApiOrigin(api),
+          viewerProtocolPolicy:
+            cdk.aws_cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          cachePolicy: cdk.aws_cloudfront.CachePolicy.CACHING_DISABLED,
         },
-        'static/*': {
-          origin: new origins.S3Origin(nextBucket),
-          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+        additionalBehaviors: {
+          '_next/static/*': {
+            origin: new cdk.aws_cloudfront_origins.S3Origin(nextBucket),
+            viewerProtocolPolicy:
+              cdk.aws_cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+          },
+          'static/*': {
+            origin: new cdk.aws_cloudfront_origins.S3Origin(nextBucket),
+            viewerProtocolPolicy:
+              cdk.aws_cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+          },
         },
-      },
-      minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
-      logBucket: nextLoggingBucket,
-      logFilePrefix: 'cloudfront-access-logs',
-    });
-    
-    new CfnOutput(this, 'CloudFront URL', {
-      value: `https://${cloudfrontDistribution.distributionDomainName}`
-    });
-    
-    new s3deploy.BucketDeployment(this,  'deploy-next-static-bucket', {
-        sources: [s3deploy.Source.asset('app/.next/static/')],
-        destinationBucket: nextBucket,
-        destinationKeyPrefix: '_next/static', 
-        distribution: cloudfrontDistribution,
-        distributionPaths: ['/_next/static/*']
+        minimumProtocolVersion:
+          cdk.aws_cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
+        logBucket: nextLoggingBucket,
+        logFilePrefix: 'cloudfront-access-logs',
       }
     );
-    
-    new s3deploy.BucketDeployment(this,  'deploy-next-public-bucket', {
-        sources: [s3deploy.Source.asset('app/public/static/')],
+
+    new cdk.CfnOutput(this, 'CloudFront URL', {
+      value: `https://${cloudfrontDistribution.distributionDomainName}`,
+    });
+
+    new cdk.aws_s3_deployment.BucketDeployment(
+      this,
+      'deploy-next-static-bucket',
+      {
+        sources: [cdk.aws_s3_deployment.Source.asset('app/.next/static/')],
         destinationBucket: nextBucket,
-        destinationKeyPrefix: 'static', 
+        destinationKeyPrefix: '_next/static',
         distribution: cloudfrontDistribution,
-        distributionPaths: ['/static/*']
+        distributionPaths: ['/_next/static/*'],
+      }
+    );
+
+    new cdk.aws_s3_deployment.BucketDeployment(
+      this,
+      'deploy-next-public-bucket',
+      {
+        sources: [cdk.aws_s3_deployment.Source.asset('app/public/static/')],
+        destinationBucket: nextBucket,
+        destinationKeyPrefix: 'static',
+        distribution: cloudfrontDistribution,
+        distributionPaths: ['/static/*'],
       }
     );
   }

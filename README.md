@@ -28,14 +28,14 @@ npm run build
 
 ```bash
 cd ..
-cdk bootstrap
-cdk synth
+cdk bootstrap --profile ivan-arteaga-dev
+cdk synth --profile ivan-arteaga-dev
 ```
 
 5. Deploy the application
 
 ```bash
-cdk deploy
+cdk deploy  --profile ivan-arteaga-dev
 ```
 
 ## Next.js Static Files Support
@@ -48,16 +48,17 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 ## Useful commands
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+- `npm run build` compile typescript to js
+- `npm run watch` watch for changes and compile
+- `npm run test` perform the jest unit tests
+- `cdk deploy` deploy this stack to your default AWS account/region
+- `cdk diff` compare deployed stack with current state
+- `cdk synth` emits the synthesized CloudFormation template
 
 ## Destroy CDK app resources
 
 To clean up your CDK app run the below command:
+
 ```bash
 cdk destroy --all
 ```

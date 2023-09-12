@@ -23,7 +23,7 @@ export class PipelineStack extends cdk.Stack {
 
     const sourcegithubconnection = pipelines.CodePipelineSource.connection(
       'inecsoft/cdk-serverless-application',
-      'cdk-serverless-app',
+      'oring-cdk-nextjs',
       {
         connectionArn: 'REPLACE_WITH_CONNECTION_ARN',
       }
