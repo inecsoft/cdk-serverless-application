@@ -45,6 +45,11 @@ export class NextjsLambdaCdkStack extends cdk.Stack {
     );
 
     const api = new cdk.aws_apigateway.RestApi(this, 'api', {
+      cloudWatchRole: true,
+      deployOptions: {
+        loggingLevel: cdk.aws_apigateway.MethodLoggingLevel.INFO,
+        dataTraceEnabled: true,
+      },
       defaultCorsPreflightOptions: {
         allowOrigins: cdk.aws_apigateway.Cors.ALL_ORIGINS,
         allowMethods: cdk.aws_apigateway.Cors.ALL_METHODS,
