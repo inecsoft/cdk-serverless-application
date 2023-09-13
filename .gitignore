@@ -8,7 +8,7 @@
 
 *.d.ts
 node_modules
-package-lock.json
+# package-lock.json
 
 # CDK asset staging directory
 .cdk.staging
