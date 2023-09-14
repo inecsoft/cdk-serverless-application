@@ -14,7 +14,7 @@ export class PipelineStack extends cdk.Stack {
 
     const sourcegithubpat = pipelines.CodePipelineSource.gitHub(
       'inecsoft/cdk-serverless-application',
-      'nextjs-app',
+      'api-lambda',
       {
         // This is optional
         authentication: cdk.SecretValue.secretsManager('dev/pat'),
@@ -23,7 +23,7 @@ export class PipelineStack extends cdk.Stack {
 
     const sourcegithubconnection = pipelines.CodePipelineSource.connection(
       'inecsoft/cdk-serverless-application',
-      'cdk-serverless-app',
+      'api-lambda',
       {
         connectionArn: 'REPLACE_WITH_CONNECTION_ARN',
       }
@@ -32,14 +32,7 @@ export class PipelineStack extends cdk.Stack {
     this.pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
       synth: new pipelines.ShellStep('synth', {
         input: sourcegithubpat,
-        commands: [
-          'npm ci',
-          'cd app',
-          'npm install',
-          'npm run build',
-          'cd ..',
-          'npx cdk synth',
-        ],
+        commands: ['npm ci', 'npm run build', 'npx cdk synth'],
       }),
 
       // Defaults for all CodeBuild projects

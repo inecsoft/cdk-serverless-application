@@ -30,6 +30,7 @@ import {
   PhysicalResourceId,
 } from 'aws-cdk-lib/custom-resources';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { DocumentManagementApi } from './api';
 
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
@@ -49,6 +50,8 @@ export class CdkServerlessApplicationStack extends cdk.Stack {
       maxAzs: 3,
       natGateways: 1,
     });
+
+    const api = new DocumentManagementApi(this, 'DocumentManageApi');
 
     new cdk.CfnOutput(this, 'DocumentsBucketNameExport', {
       value: bucket.bucketName,

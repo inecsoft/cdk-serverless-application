@@ -55,16 +55,6 @@ export class AppStage extends cdk.Stage {
         product_owner: 'ivan.arteaga',
       },
     });
-
-    new NextjsLamdbaStack(this, 'NextjsLamdbaStack', {
-      tags: {
-        environment: 'dev',
-        category: 'ecommerce',
-        tech: 'cdk',
-        repo: 'cdk-serverless-application',
-        product_owner: 'ivan.arteaga',
-      },
-    });
   }
 }
 
