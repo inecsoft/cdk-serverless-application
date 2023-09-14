@@ -3,7 +3,6 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { CdkServerlessApplicationStack } from '../lib/cdk-serverless-application-stack';
 import { PipelineStack } from '../lib/cdk-serverless-app-pipeline-stack';
-import { NextjsLamdbaStack } from '../lib/cdk-nextjsapp-stack';
 import { Construct } from 'constructs';
 
 const app = new cdk.App();
