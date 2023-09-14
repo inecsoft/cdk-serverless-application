@@ -51,7 +51,9 @@ export class CdkServerlessApplicationStack extends cdk.Stack {
       natGateways: 1,
     });
 
-    const api = new DocumentManagementApi(this, 'DocumentManageApi');
+    const api = new DocumentManagementApi(this, 'DocumentManageApi', {
+      documentBucket: bucket,
+    });
 
     new cdk.CfnOutput(this, 'DocumentsBucketNameExport', {
       value: bucket.bucketName,

@@ -4,14 +4,12 @@ import { Construct } from 'constructs';
 import path from 'path';
 import { Interface } from 'readline';
 
-interface DocumentManagementApiProps {}
+interface DocumentManagementApiProps {
+  documentBucket: cdk.aws_s3.IBucket;
+}
 
 export class DocumentManagementApi extends Construct {
-  constructor(
-    scope: Construct,
-    id: string,
-    props?: DocumentManagementApiProps
-  ) {
+  constructor(scope: Construct, id: string, props: DocumentManagementApiProps) {
     super(scope, id);
 
     const GetDocumentsFunction = new cdk.aws_lambda_nodejs.NodejsFunction(
@@ -25,6 +23,9 @@ export class DocumentManagementApi extends Construct {
         timeout: cdk.Duration.minutes(5),
         tracing: cdk.aws_lambda.Tracing.ACTIVE,
         entry: path.join(__dirname, '..', 'api', 'getDocuments', 'index.ts'),
+        environment: {
+          DOCUMENTS_BUCKET_NAME: props.documentBucket.bucketName,
+        },
         // layers: [lambdaAdapterLayer],
         // role: lambdaRole, // user-provided role
         bundling: {
