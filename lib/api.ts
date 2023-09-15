@@ -1,8 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
-import { Handler } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import path from 'path';
-import { Interface } from 'readline';
 
 interface DocumentManagementApiProps {
   documentBucket: cdk.aws_s3.IBucket;
@@ -12,7 +10,7 @@ export class DocumentManagementApi extends Construct {
   constructor(scope: Construct, id: string, props: DocumentManagementApiProps) {
     super(scope, id);
 
-    const GetDocumentsFunction = new cdk.aws_lambda_nodejs.NodejsFunction(
+    const getDocumentsFunction = new cdk.aws_lambda_nodejs.NodejsFunction(
       this,
       'GetDocumentsFunction',
       {
@@ -36,5 +34,15 @@ export class DocumentManagementApi extends Construct {
         },
       }
     );
+
+    const bucketPermissions = new cdk.aws_iam.PolicyStatement();
+    bucketPermissions.addResources(`${props.documentBucket.bucketArn}/*`);
+    bucketPermissions.addActions('s3:GetObject', 's3:PutObject');
+    getDocumentsFunction.addToRolePolicy(bucketPermissions);
+
+    const bucketContainerPermissions = new cdk.aws_iam.PolicyStatement();
+    bucketContainerPermissions.addResources(props.documentBucket.bucketArn);
+    bucketContainerPermissions.addActions('s3:ListBucket');
+    getDocumentsFunction.addToRolePolicy(bucketContainerPermissions);
   }
 }

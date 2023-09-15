@@ -1,35 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
-import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import path from 'path';
 import { Networking } from './cdk-networking';
-import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
-import { Architecture } from 'aws-cdk-lib/aws-lambda';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { RetentionDays } from 'aws-cdk-lib/aws-logs';
-import {
-  CorsHttpMethod,
-  HttpApi,
-  HttpMethod,
-} from '@aws-cdk/aws-apigatewayv2-alpha';
-import { HttpLambdaIntegration } from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
-import {
-  Distribution,
-  OriginAccessIdentity,
-  ViewerProtocolPolicy,
-} from 'aws-cdk-lib/aws-cloudfront';
-import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { execSync, ExecSyncOptions } from 'child_process';
-import { join } from 'path';
-import { copySync } from 'fs-extra';
-import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-
-import {
-  AwsCustomResource,
-  AwsCustomResourcePolicy,
-  PhysicalResourceId,
-} from 'aws-cdk-lib/custom-resources';
-import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { DocumentManagementApi } from './api';
 
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
@@ -44,6 +16,16 @@ export class CdkServerlessApplicationStack extends cdk.Stack {
       versioned: false,
       blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    new cdk.aws_s3_deployment.BucketDeployment(this, 'DocumentsDeployment', {
+      sources: [
+        cdk.aws_s3_deployment.Source.asset(
+          path.join(__dirname, '..', 'documents')
+        ),
+      ],
+      destinationBucket: bucket,
+      memoryLimit: 512,
     });
 
     new Networking(this, 'NetworkingConstruct', {
