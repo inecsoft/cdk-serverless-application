@@ -18,13 +18,13 @@ export const getDocuments = async (
       .listObjects({ Bucket: process.env.DOCUMENTS_BUCKET_NAME! })
       .promise();
     const documents = await Promise.all(
-      results!.map(async (r) => generateSignedURL(r))
+      results!.map(async (r: any) => generateSignedURL(r))
     );
     return {
       statusCode: 200,
       body: JSON.stringify(documents),
     };
-  } catch (err) {
+  } catch (err: any) {
     return {
       statusCode: 500,
       body: err.message,
