@@ -1,11 +1,15 @@
+import { S3Client } from '@aws-sdk/client-s3';
 import {
   APIGatewayProxyEventV2,
   Context,
   APIGatewayProxyStructuredResultV2,
 } from 'aws-lambda';
+
 const { S3 } = require('@aws-sdk/client-s3');
 
-const s3 = new S3();
+const s3: any = new S3();
+const client = new S3Client({});
+
 const bucketName = process.env.DOCUMENTS_BUCKET_NAME;
 
 export const getDocuments = async (
@@ -33,7 +37,7 @@ export const getDocuments = async (
 };
 
 const generateSignedURL = async (
-  object: S3.object
+  object: any
 ): Promise<{ filename: string; url: string }> => {
   const url = await s3.getSignedUrlPromise('getObject', {
     Bucket: bucketName,
