@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import * as pipelines from 'aws-cdk-lib/pipelines'
+import * as pipelines from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 
 export interface PipelineStackProps extends cdk.StackProps {
@@ -7,31 +7,65 @@ export interface PipelineStackProps extends cdk.StackProps {
 }
 
 export class PipelineStack extends cdk.Stack {
-    public readonly pipeline: pipelines.CodePipeline;
+  public readonly pipeline: pipelines.CodePipeline;
 
-    constructor(scope: Construct, id :string, props: PipelineStackProps) {
-        super(scope, id, props);
+  constructor(scope: Construct, id: string, props: PipelineStackProps) {
+    super(scope, id, props);
 
-        const sourcegithubpat = pipelines.CodePipelineSource.gitHub( 'TfGMEnterprise/ivan-secrets-management-practice', 'cdk-serverless-app', {
-            // This is optional
-            authentication: cdk.SecretValue.secretsManager('dev/pat'),
-        });
+    const sourcegithubpat = pipelines.CodePipelineSource.gitHub(
+      'inecsoft/cdk-serverless-application',
+      'react-app-plurasight',
+      {
+        // This is optional
+        authentication: cdk.SecretValue.secretsManager('dev/pat'),
+      }
+    );
 
-        const sourcegithubconnection = pipelines.CodePipelineSource.connection('TfGMEnterprise/ivan-secrets-management-practice', 'cdk-serverless-app', {
-            connectionArn: 'REPLACE_WITH_CONNECTION_ARN',
-        });
+    const sourcegithubconnection = pipelines.CodePipelineSource.connection(
+      'inecsoft/cdk-serverless-application',
+      'react-app-plurasight',
+      {
+        connectionArn: 'REPLACE_WITH_CONNECTION_ARN',
+      }
+    );
 
-        this.pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
-            synth: new pipelines.ShellStep('synth', {
-                input: sourcegithubpat,
-                commands: [
-                    'npm ci',
-                    'npx cdk synth',
-                    'echo {SourceVariables.BranchName}',
-                ],
-            }),
-            crossAccountKeys: true,
-            dockerEnabledForSynth: true,
-        });  
-    }
+    this.pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
+      synth: new pipelines.ShellStep('synth', {
+        input: sourcegithubpat,
+        commands: ['npm ci', 'npm run build', 'npx cdk synth'],
+      }),
+
+      // Defaults for all CodeBuild projects
+      codeBuildDefaults: {
+        // Prepend commands and configuration to all projects
+        partialBuildSpec: cdk.aws_codebuild.BuildSpec.fromObject({
+          version: '0.2',
+          phases: {
+            install: {
+              // Add the shell commands to install your drop-in Docker
+              // replacement to the CodeBuild enviromment.
+              // commands: installCommands,
+              // runtime-versions:
+              //   python: 3.8
+              // nodejs: 18,
+              'runtime-versions': { nodejs: '18' },
+            },
+          },
+
+          // ...
+        }),
+
+        // Control the build environment
+        buildEnvironment: {
+          computeType: cdk.aws_codebuild.ComputeType.LARGE,
+          buildImage: cdk.aws_codebuild.LinuxBuildImage.STANDARD_7_0,
+          privileged: true,
+        },
+        timeout: cdk.Duration.minutes(10),
+      },
+
+      crossAccountKeys: true,
+      dockerEnabledForSynth: true,
+    });
+  }
 }
