@@ -93,7 +93,9 @@ export class CdkServerlessApplicationStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, 'HttpApiUrl', { value: api.apiEndpoint });
-    new cdk.CfnOutput(this, 'HttpApiUrl-data', { value: `${api.apiEndpoint}/notes}` });
+    new cdk.CfnOutput(this, 'HttpApiUrl-data', {
+      value: `${api.apiEndpoint}/notes}`,
+    });
 
     const websiteBucket = new Bucket(this, 'WebsiteBucket', {
       autoDeleteObjects: true,
@@ -144,23 +146,32 @@ export class CdkServerlessApplicationStack extends cdk.Stack {
         local: {
           tryBundle(outputDir: string) {
             try {
-              execSync('esbuild --version', execOptions);
+              execSync('npx vite build', execOptions);
             } catch {
               return false;
             }
-            
+
             try {
               // copy the dist directory that is created with 'yarn generate'
               // to the cdk outDir
-              copySync(join(__dirname, '../dist'), outputDir, {  overwrite: true }
-              );
+              copySync(join(__dirname, '../dist'), outputDir, {
+                overwrite: true,
+              });
             } catch {
-              return false
+              return false;
             }
             return true;
           },
         },
       },
+    });
+
+    new BucketDeployment(this, 'DeployWebsite', {
+      destinationBucket: websiteBucket,
+      distribution,
+      logRetention: RetentionDays.ONE_DAY,
+      prune: false,
+      sources: [bundle],
     });
 
     new AwsCustomResource(this, 'ApiUrlResource', {
