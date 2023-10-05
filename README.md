@@ -62,6 +62,7 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 ```
 npx create-react-app sample-react-app
 cd sample-react-app
+yarn add react-router-dom
 npm start
 ```
 
