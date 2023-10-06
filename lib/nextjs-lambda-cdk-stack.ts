@@ -41,6 +41,7 @@ export class NextjsLambdaCdkStack extends cdk.Stack {
         layers: [lambdaAdapterLayer],
         memorySize: 256,
         timeout: cdk.Duration.minutes(5),
+        description: 'Nodejs 18 lambda for nextjs',
       }
     );
 
@@ -128,6 +129,8 @@ export class NextjsLambdaCdkStack extends cdk.Stack {
       value: `https://${cloudfrontDistribution.distributionDomainName}`,
     });
 
+    // #!/bin/bash -e
+    // aws s3 cp ./.next/static s3://next-bucket/_next/static --recursive
     new cdk.aws_s3_deployment.BucketDeployment(
       this,
       'deploy-next-static-bucket',
