@@ -25,12 +25,12 @@ export class NextjsLambdaCdkStack extends cdk.Stack {
           path.join(__dirname, '../app/.next/', 'standalone')
         ),
         compatibleArchitectures: [
-          // cdk.aws_lambda.Architecture.X86_64,
-          // cdk.aws_lambda.Architecture.ARM_64,
+          cdk.aws_lambda.Architecture.X86_64,
+          cdk.aws_lambda.Architecture.ARM_64,
         ],
         compatibleRuntimes: [
-          cdk.aws_lambda.Runtime.NODEJS_18_X,
-          cdk.aws_lambda.Runtime.NODEJS_16_X,
+          // cdk.aws_lambda.Runtime.NODEJS_18_X,
+          // cdk.aws_lambda.Runtime.NODEJS_16_X,
           // cdk.aws_lambda.Runtime.NODEJS_14_X,
           // cdk.aws_lambda.Runtime.PYTHON_3_11,
           // cdk.aws_lambda.Runtime.PYTHON_3_9,
