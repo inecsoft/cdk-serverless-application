@@ -25,12 +25,27 @@ export class NextjsLambdaCdkStack extends cdk.Stack {
           path.join(__dirname, '../app/.next/', 'standalone')
         ),
         compatibleArchitectures: [
-          cdk.aws_lambda.Architecture.X86_64,
-          cdk.aws_lambda.Architecture.ARM_64,
+          // cdk.aws_lambda.Architecture.X86_64,
+          // cdk.aws_lambda.Architecture.ARM_64,
         ],
         compatibleRuntimes: [
           cdk.aws_lambda.Runtime.NODEJS_18_X,
           cdk.aws_lambda.Runtime.NODEJS_16_X,
+          // cdk.aws_lambda.Runtime.NODEJS_14_X,
+          // cdk.aws_lambda.Runtime.PYTHON_3_11,
+          // cdk.aws_lambda.Runtime.PYTHON_3_9,
+          // cdk.aws_lambda.Runtime.PYTHON_3_8,
+          // cdk.aws_lambda.Runtime.PYTHON_3_7,
+          // cdk.aws_lambda.Runtime.RUBY_2_7,
+          // cdk.aws_lambda.Runtime.RUBY_3_2,
+          // cdk.aws_lambda.Runtime.JAVA_11,
+          // cdk.aws_lambda.Runtime.JAVA_17,
+          // cdk.aws_lambda.Runtime.JAVA_8_CORRETTO,
+          // cdk.aws_lambda.Runtime.JAVA_8,
+          // cdk.aws_lambda.Runtime.GO_1_X,
+          // cdk.aws_lambda.Runtime.DOTNET_6,
+          // cdk.aws_lambda.Runtime.PROVIDED,
+          // cdk.aws_lambda.Runtime.PROVIDED_AL2,
         ],
       }
     );
