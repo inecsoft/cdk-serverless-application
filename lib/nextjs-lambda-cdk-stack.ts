@@ -7,8 +7,15 @@ import path from 'path';
 export class NextjsLambdaCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+    // aws lambda list-layers --profile ivan-arteaga-dev --region eu-west-1 | jq -r '.Layers[]'
 
-    const lambdaAdapterLayer = new cdk.aws_lambda.LayerVersion(
+    const lambdaAdapterLayer = cdk.aws_lambda.LayerVersion.fromLayerVersionArn(
+      this,
+      'LambdaAdapterLayerX86',
+      `arn:aws:lambda:${this.region}:753240598075:layer:LambdaAdapterLayerX86:3`
+    );
+
+    const lambdaAdapterLayerVersion = new cdk.aws_lambda.LayerVersion(
       this,
       'lambdaAdapterLayer',
       {
