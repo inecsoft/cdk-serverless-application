@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { NextjsLambdaCdkStack } from '../lib/nextjs-lambda-cdk-stack';
+import { pythonLambdaCdkStack } from '../lib/lambda-from-image-python';
 import { PipelineStack } from '../lib/cdk-serverless-app-pipeline-stack';
 
 const app = new cdk.App();
 
-const delivery = new PipelineStack(app, 'nextjs-DeliveryPipeline', {
-  name: 'nextjs-DeliveryPipeline',
+const delivery = new PipelineStack(app, 'python-DeliveryPipeline', {
+  name: 'python-DeliveryPipeline',
   env: {
     // account: '12345678910',
     region: 'eu-west-1',
@@ -21,7 +21,7 @@ export class AppStage extends cdk.Stage {
   constructor(scope: Construct, id: string, props?: AppStageProps) {
     super(scope, id, props);
 
-    new NextjsLambdaCdkStack(this, 'NextjsLambdaCdkStack', {
+    new pythonLambdaCdkStack(this, 'pythonLambdaCdkStack', {
       tags: {
         environment: 'dev',
         category: 'ecommerce',
@@ -35,7 +35,7 @@ export class AppStage extends cdk.Stage {
 
 delivery.pipeline.addStage(
   new AppStage(app, 'App', {
-    name: 'deploy-nextjs-app',
+    name: 'deploy-python-app',
     env: {
       // account: '5555557759',
       region: 'eu-west-1',
