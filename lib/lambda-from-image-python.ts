@@ -1,17 +1,20 @@
 import { Construct } from 'constructs';
-
 import * as cdk from 'aws-cdk-lib';
 
-import path from 'path';
-import * as aws_apigateway2 from '@aws-cdk/aws-apigatewayv2-alpha';
-// import aws_apigateway2 from @aws-cdk/aws-apigateway2;
-import * as aws_apigatewayv2_integrations from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-// import aws_apigatewayv2_integrations from @aws-cdk/aws-apigatewayv2-integrations;
-
+const path = require('path');
 export class pythonLambdaCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
     // aws lambda list-layers --profile ivan-arteaga-dev --region eu-west-1 | jq -r '.Layers[]'
+
+    //define my dynamo table
+
+    const dynamodbtable = new cdk.aws_dynamodb.TableV2(this, 'Movies', {
+      partitionKey: { name: 'pk', type: cdk.aws_dynamodb.AttributeType.STRING },
+      contributorInsights: true,
+      tableClass: cdk.aws_dynamodb.TableClass.STANDARD_INFREQUENT_ACCESS,
+      pointInTimeRecovery: true,
+    });
 
     // defines an AWS Lambda resource
     const Lambda = new cdk.aws_lambda.DockerImageFunction(
@@ -26,13 +29,22 @@ export class pythonLambdaCdkStack extends cdk.Stack {
       }
     );
 
-    // defines an API Gateway Http API resource backed by our "PredictiveLambda" function.
-    const api = new aws_apigateway2.HttpApi(this, 'Predictive Endpoint', {
-      defaultIntegration:
-        new aws_apigatewayv2_integrations.HttpLambdaIntegration({
-          handler: Lambda,
+    // monitoring lambda
+    if (Lambda.timeout) {
+      new cdk.aws_cloudwatch.Alarm(this, `PythonLambdaTimeoutAlarm`, {
+        metric: Lambda.metricDuration().with({
+          statistic: 'Maximum',
         }),
-    });
+        evaluationPeriods: 1,
+        datapointsToAlarm: 1,
+        threshold: Lambda.timeout.toMilliseconds(),
+        treatMissingData: cdk.aws_cloudwatch.TreatMissingData.IGNORE,
+        alarmName: 'Python Lambda Timeout',
+      });
+    }
+
+    // defines an API Gateway Http API resource backed by our "PredictiveLambda" function.
+    const api = new cdk.aws_apigateway.RestApi(this, 'ApiPredictiveEndpoint');
 
     new cdk.CfnOutput(this, 'HTTP API Url', {
       value: api.url ?? 'Something went wrong with the deploy',
@@ -49,7 +61,6 @@ export class pythonLambdaCdkStack extends cdk.Stack {
       }),
       anyMethod: true,
     });
-
     const nextLoggingBucket = new cdk.aws_s3.Bucket(
       this,
       'next-logging-bucket',
